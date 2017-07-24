@@ -24,6 +24,9 @@
     "url": "https://github.com/namshi/expressjs-utils/issues"
   },
   "homepage": "https://github.com/namshi/expressjs-utils",
+  "dependencies": {
+    "json2csv": "^3.9.1",
+  },
   "devDependencies": {
     "release-it": "^2.7.1"
   }
