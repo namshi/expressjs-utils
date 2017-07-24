@@ -1,0 +1,30 @@
+{
+  "name": "expressjs-utils",
+  "version": "1.0.0",
+  "description": "Utilities that make our life easier while writing express apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "release-it -n -i patch",
+    "release:minor": "release-it -n -i minor",
+    "release:major": "release-it -n -i major"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/namshi/expressjs-utils"
+  },
+  "keywords": [
+    "express",
+    "utils"
+    "node",
+  ],
+  "author": "Joe Jean <joe.jean@namshi.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/namshi/expressjs-utils/issues"
+  },
+  "homepage": "https://github.com/namshi/expressjs-utils",
+  "devDependencies": {
+    "release-it": "^2.7.1"
+  }
+}
