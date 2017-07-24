@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const json2csv = require('json2csv');
 
 /**
  * Detects the API version that's been requested,
@@ -62,6 +63,13 @@ function httpError(code = 500, message = http.STATUS_CODES[code]) {
   err.statusCode = code;
 
   return err;
+}
+
+function serveCSV(res, filename, rows) {
+  res.set('Content-Type', 'text/csv');
+  res.set('Content-disposition', `attachment; filename=${filename}`);
+
+  return res.send(json2csv({ data: rows }));
 }
 
 module.exports = {

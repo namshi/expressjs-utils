@@ -114,3 +114,17 @@ Throws an error that has an HTTP status code. These errors are public-friendly, 
   });
 
 ```
+
+### serveCSV
+`serveCSV(res, filename, rows)`
+
+returns a downloadable csv file built from "rows" which is an array of objects.
+
+``` js
+  router.get('/data', async(req, res, next) => {
+    let data = [{name: "Test 0", age: 3}, {name: "Test 1", age: 4}];
+
+    return utils.serveCSV(res, "data.csv", data);
+  });
+
+```
