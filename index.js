@@ -10,6 +10,7 @@ const json2csv = require('json2csv');
 function detectApiVersionMiddleware(req, res, next) {
   let version = parseInt(req.headers['n-api-version']) || parseInt(req.params.apiVersion) || 0;
   req.apiVersion = res.apiVersion = version;
+
   next();
 }
 
@@ -48,7 +49,7 @@ function getRouter(app, svc) {
   app.use(`/${svc}`, router);
   let version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
   app.use(version, router);
-  app.use(detectApiVersionMiddleware);
+  router.use(detectApiVersionMiddleware);
 
   return router
 }
