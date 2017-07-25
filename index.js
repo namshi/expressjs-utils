@@ -2,6 +2,12 @@ const express = require('express');
 const http = require('http');
 const json2csv = require('json2csv');
 
+function hc(app) {
+  app.get('/public/hc', function(req, res) {
+    res.end('OK');
+  });
+}
+
 /**
  * Detects the API version that's been requested,
  * either from the N-Api-Version header or the
@@ -74,6 +80,7 @@ function serveCSV(res, filename, rows) {
 }
 
 module.exports = {
+  hc,
   static,
   errorHandler,
   start,
