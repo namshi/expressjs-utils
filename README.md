@@ -128,3 +128,11 @@ returns a downloadable csv file built from "rows" which is an array of objects.
   });
 
 ```
+### hc
+`hc(app)`
+
+installs a health check route (/public/hc)
+
+``` js
+  utils.hc(app);
+```
