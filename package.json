@@ -4,10 +4,7 @@
   "description": "Utilities that make our life easier while writing express apps",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "release": "release-it -n -i patch",
-    "release:minor": "release-it -n -i minor",
-    "release:major": "release-it -n -i major"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -15,8 +12,8 @@
   },
   "keywords": [
     "express",
-    "utils"
-    "node",
+    "utils",
+    "node"
   ],
   "author": "Joe Jean <joe.jean@namshi.com>",
   "license": "MIT",
@@ -25,9 +22,6 @@
   },
   "homepage": "https://github.com/namshi/expressjs-utils",
   "dependencies": {
-    "json2csv": "^3.9.1",
-  },
-  "devDependencies": {
-    "release-it": "^2.7.1"
+    "json2csv": "^3.9.1"
   }
 }
