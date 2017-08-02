@@ -86,4 +86,5 @@ module.exports = {
   start,
   getRouter,
   httpError,
+  serveCSV,
 }
