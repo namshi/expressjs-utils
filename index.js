@@ -33,9 +33,13 @@ function errorHandler(app) {
     if (app.get('env') == 'dev' && !err.statusCode) {
       throw err;
     }
-    err.message = err.statusCode ? err.message : 'Internal Server Error'
-    
-    res.status(err.statusCode || 500).send({message: err.message, userMessage: err.userMessage || ''});
+
+    if (err.data) {
+      res.status(err.statusCode || 500).send(err.data)
+      return
+    }
+
+    res.status(err.statusCode || 500).send({message: err.statusCode ? err.message : 'Internal Server Error'});
   });
 }
 
@@ -66,12 +70,9 @@ function getRouter(app, svc) {
  * an HTTP status code. These errors are public-friendly,
  * meaning their message can be displayed on the API.
  */
-function httpError(code = 500, message = http.STATUS_CODES[code], userMessage) {
+function httpError(code = 500, message = http.STATUS_CODES[code]) {
   let err = new Error(message);
   err.statusCode = code;
-  if (userMessage) {
-    err.userMessage = userMessage;
-  }
 
   return err;
 }
