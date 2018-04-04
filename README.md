@@ -98,6 +98,14 @@ provides a generic error handler that can be used at the "end" of your app
 
 Throws an error that has an HTTP status code. These errors are public-friendly, therefore their message can be displayed on the API.
 
+You may also customize the format of the error message. For example, if you want to send an object instead of a string, you need to add the object to the data attribute of the error object like so:
+
+```js
+  let err = utils.httpError(404);
+  err.data = {userMessage: 'This product was not found. Please try other products'}
+```
+Then on the client you will be able to do `err.userMessage`. 
+
 ``` js
   // if you are using the error handler above, you can do something like this in
   // any of your API endpoint

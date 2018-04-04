@@ -34,6 +34,11 @@ function errorHandler(app) {
       throw err;
     }
 
+    if (err.data) {
+      res.status(err.statusCode || 500).send(err.data)
+      return
+    }
+
     res.status(err.statusCode || 500).send({message: err.statusCode ? err.message : 'Internal Server Error'});
   });
 }
