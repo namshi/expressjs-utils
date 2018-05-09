@@ -71,8 +71,14 @@ function getRouter(app, svc) {
  * meaning their message can be displayed on the API.
  */
 function httpError(code = 500, message = http.STATUS_CODES[code]) {
-  let err = new Error(message);
+  let err = new Error();
   err.statusCode = code;
+  err.message = message;
+
+  if (typeof message === 'object') {
+    err.message = JSON.stringify(message);
+    err.data = message;
+  }
 
   return err;
 }
