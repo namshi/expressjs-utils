@@ -14,7 +14,10 @@ function hc(app) {
  * URL parameters.
  */
 function detectApiVersionMiddleware(req, res, next) {
-  let version = parseInt(req.headers['n-api-version']) || parseInt(req.params.apiVersion) || 0;
+  let version =
+    parseInt(req.headers['n-api-version']) ||
+    parseInt(req.params.apiVersion) ||
+    0;
   req.apiVersion = res.apiVersion = version;
 
   next();
@@ -26,6 +29,42 @@ function static(app, path) {
   app.use('/', express.static(__dirname + path));
 }
 
+/* Usage: app.use(errorHandlerJSON({ logger:mylogger, context: false })); */
+function errorHandlerJSON(options) {
+  options = Object.assign(
+    {},
+    {
+      logger: options.logger || console,
+      context: (options.context == undefined && true) || options.context,
+      errorMessage: options.errorMessage || 'Internal Server Error',
+    }
+  );
+  return function(err, req, res, next) {
+    const context = {
+      status: res.statusCode,
+      method: req.method,
+      route: req.path,
+    };
+
+    options.logger.error(err, (options.context && context) || '');
+
+    if (err.message[0] == '.') {
+      options.errorMessage =
+        (err.message[0] == '.' && err.message.slice(1)) || err.message;
+    }
+
+    res
+      .status(err.statusCode || 500)
+      .send(
+        Object.assign(
+          {},
+          { message: options.errorMessage },
+          (options.context && context) || null
+        )
+      );
+  };
+}
+
 function errorHandler(app) {
   app.use((err, req, res, next) => {
     console.error(err);
@@ -35,34 +74,36 @@ function errorHandler(app) {
     }
 
     if (err.data) {
-      res.status(err.statusCode || 500).send(err.data)
-      return
+      res.status(err.statusCode || 500).send(err.data);
+      return;
     }
 
-    res.status(err.statusCode || 500).send({message: err.statusCode ? err.message : 'Internal Server Error'});
+    res.status(err.statusCode || 500).send({
+      message: err.statusCode ? err.message : 'Internal Server Error',
+    });
   });
 }
 
 function start(app, port, env) {
-  env = env || process.env.NODE_ENV
-  port = port || 8082
+  env = env || process.env.NODE_ENV;
+  port = port || 8082;
   if (env !== 'test') {
     app.listen(port, () => {
       console.log(`Server started on port ${port}`);
     });
   }
 
-  return app
+  return app;
 }
 
 function getRouter(app, svc) {
-  let router = express.Router({mergeParams: true})
+  let router = express.Router({ mergeParams: true });
   app.use(`/${svc}`, router);
   let version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
   app.use(version, router);
   router.use(detectApiVersionMiddleware);
 
-  return router
+  return router;
 }
 
 /**
@@ -98,4 +139,5 @@ module.exports = {
   getRouter,
   httpError,
   serveCSV,
-}
+  errorHandlerJSON,
+};
