@@ -28,9 +28,11 @@ function static(app, path) {
 
 function errorHandler(app, logger) {
   app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500
+
     if (logger) {
-      logger.log(err, {
-         status: res.statusCode,
+      logger.error(err, {
+         status: statusCode,
          method: req.method,
          route: req.path,
       })
@@ -43,11 +45,11 @@ function errorHandler(app, logger) {
     }
 
     if (err.data) {
-      res.status(err.statusCode || 500).send(err.data)
+      res.status(statusCode).send(err.data)
       return
     }
 
-    res.status(err.statusCode || 500).send({message: err.statusCode ? err.message : 'Internal Server Error'});
+    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error'});
   });
 }
 
