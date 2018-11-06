@@ -26,9 +26,17 @@ function static(app, path) {
   app.use('/', express.static(__dirname + path));
 }
 
-function errorHandler(app) {
+function errorHandler(app, logger) {
   app.use((err, req, res, next) => {
-    console.error(err);
+    if (logger) {
+      logger.log(err, {
+         status: res.statusCode,
+         method: req.method,
+         route: req.path,
+      })
+    } else {
+      console.error(err);
+    }
 
     if (app.get('env') == 'dev' && !err.statusCode) {
       throw err;

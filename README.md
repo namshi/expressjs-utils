@@ -74,8 +74,9 @@ If no API version is passed, that is `vX` is not present in the url, it will be 
 
 ### errorHandler
 
-`errorHandler(app)`
+`errorHandler(app, logger)`
 provides a generic error handler that can be used at the "end" of your app
+`logger` is optional. If you want to use a logger that will give you a bit more details, you should just get our [open-source logger](https://github.com/namshi/lib-logger) and pass it to the error handler and we will use it, instead of `console.error`, to log the error. 
 
 ``` js
   // Add this after all your routes
