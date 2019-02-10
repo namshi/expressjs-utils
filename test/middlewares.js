@@ -1,6 +1,7 @@
 
 const expect = require('chai').expect;
 const middlewares = require('../middlewares');
+const translations = require('./translations')
 
 const res = {};
 const next = _=> true;
@@ -46,3 +47,13 @@ describe('withLang()', function () {
         expect(req.lang).to.be.equal('en');
   });
 });
+
+describe('withTranslate()', function(){
+      it('should have a translate function', function () {
+            const req = {lang: 'ar'}
+            const translateMiddleware = middlewares.withTranslate(translations)
+            translateMiddleware(req, res, next)
+            expect(req.translate('invalidCredentials'))
+            .to.be.equal('كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح')
+      });
+})

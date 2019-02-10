@@ -23,13 +23,13 @@ function detectApiVersionMiddleware(req, res, next) {
   next();
 }
 
-function statics(app, path) {
+function static(app, path) {
   path = path || '/../../public';
 
   app.use('/', express.static(__dirname + path));
 }
 
-function _translate(text, lang, translationObject) {
+function translate(text, lang, translationObject) {
   return _.get(translationObject, `${text}.${lang}`, text);
 }
 
@@ -37,14 +37,19 @@ function _translate(text, lang, translationObject) {
  * Configures the app with an error handler
  * Config has a shape of {
  *  translationObject: Object,
+ *  logger?: Object //preferably with a .error method attached
  * }
+ * A message and userMessage field is added to the error's json body. The userMessage is a translated
+ * version of the message field if translation is properly configured for this middleware. You can set
+ * both fields explicitly in the error response by setting err.data to the desired object.
  */
-function errorHandler(app, logger, config) {
+function errorHandler(app, logger) {
   app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500
+    err.message = err.message ? err.message : 'Empty error message'
 
     if (logger) {
-      logger.error(err, {
+      logger.error && logger.error(err, {
          status: statusCode,
          method: req.method,
          route: req.path,
@@ -53,14 +58,14 @@ function errorHandler(app, logger, config) {
       console.error(err);
     }
 
-    let translatedMessage;
-    const lang = (req.locale && req.locale.lang) ? req.locale.lang : 'en';
+    const  translatedMessage = req.translate ? req.translate(err.message) : err.message
+    // const lang = (req.locale && req.locale.lang) ? req.locale.lang : 'en';
     
-    if(config){
-      translatedMessage =  _translate(err.message, lang, config.translationObject);
-    } else {
-      translatedMessage = err.message
-    }
+    // if(config && config.translationObject){
+    //   translatedMessage =  translate(err.message, lang, config.translationObject);
+    // } else {
+    //   translatedMessage = err.message
+    // }
 
     if (app.get('env') == 'dev' && !err.statusCode) {
       throw err;
@@ -71,7 +76,8 @@ function errorHandler(app, logger, config) {
       return
     }
 
-    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error', userMessage: translatedMessage});
+    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error', 
+      userMessage: err.statusCode ? translatedMessage : 'Internal Server Error'});
   });
 }
 
@@ -124,7 +130,7 @@ function serveCSV(res, filename, rows) {
 
 module.exports = {
   hc,
-  statics,
+  static,
   errorHandler,
   start,
   getRouter,

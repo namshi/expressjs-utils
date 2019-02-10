@@ -28,12 +28,10 @@
     "mocha": "^5.2.0",
     "ramda": "^0.26.1",
     "sprintf-js": "^1.1.2",
-    "json2csv": "^3.9.1"
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "express": "^4.16.4",
-    "jest": "^24.1.0",
-    "lodash": "^4.17.11",
     "supertest": "^3.4.2"
   }
 }
