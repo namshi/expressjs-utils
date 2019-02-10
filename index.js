@@ -3,6 +3,7 @@ const http = require('http');
 const json2csv = require('json2csv');
 const conversions = require('./conversions');
 const middlewares = require('./middlewares');
+const _ = require('lodash');
 
 function hc(app) {
   app.get('/public/hc', function(req, res) {
@@ -28,7 +29,17 @@ function statics(app, path) {
   app.use('/', express.static(__dirname + path));
 }
 
-function errorHandler(app, logger) {
+function _translate(text, lang, translationObject) {
+  return _.get(translationObject, `${text}.${lang}`, text);
+}
+
+/**
+ * Configures the app with an error handler
+ * Config has a shape of {
+ *  translationObject: Object,
+ * }
+ */
+function errorHandler(app, logger, config) {
   app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500
 
@@ -42,6 +53,15 @@ function errorHandler(app, logger) {
       console.error(err);
     }
 
+    let translatedMessage;
+    const lang = (req.locale && req.locale.lang) ? req.locale.lang : 'en';
+    
+    if(config){
+      translatedMessage =  _translate(err.message, lang, config.translationObject);
+    } else {
+      translatedMessage = err.message
+    }
+
     if (app.get('env') == 'dev' && !err.statusCode) {
       throw err;
     }
@@ -51,7 +71,7 @@ function errorHandler(app, logger) {
       return
     }
 
-    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error'});
+    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error', userMessage: translatedMessage});
   });
 }
 
