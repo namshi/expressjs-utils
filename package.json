@@ -27,6 +27,7 @@
   "devDependencies": {
     "express": "^4.16.4",
     "jest": "^24.1.0",
+    "lodash": "^4.17.11",
     "supertest": "^3.4.2"
   }
 }
