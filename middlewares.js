@@ -2,14 +2,14 @@ const R = require('ramda');
 const {jsonOr} = require('./conversions');
 const { vsprintf } = require('sprintf-js')
 
-const withDataOr = R.curry((key, defaultValue = {}, req, res, next) => {
+const withDataOr = R.curry((key, defaultValue, req, res, next) => {
     req[key] = jsonOr(req.get(key), defaultValue);
     next();
 });
 
-const withLang = R.curry((allowed, defaultLang, req, res, next) => {
-    const raw = (req.query.locale || req.headers['n-locale'] || '').toLowerCase().split(/[-_]/g);
-    req.lang = raw && allowed.includes(raw[0]) && raw[0] | defaultLang;
+const withLang = R.curry((allowed, defaultLang, key, req, res, next) => {
+    const raw = (req.query && req.query.locale || req.headers && req.headers[key] || '').toLowerCase().split(/[-_]/g);
+    req.lang = raw && allowed.includes(raw[0]) && raw[0] || defaultLang;
 });
 
 //Requires withLang
