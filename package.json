@@ -4,7 +4,7 @@
   "description": "Utilities that make our life easier while writing express apps",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,11 @@
   },
   "homepage": "https://github.com/namshi/expressjs-utils",
   "dependencies": {
-    "json2csv": "^3.9.1"
+    "chai": "^4.2.0",
+    "express": "^4.16.4",
+    "json2csv": "^3.9.1",
+    "mocha": "^5.2.0",
+    "ramda": "^0.26.1",
+    "sprintf-js": "^1.1.2"
   }
 }

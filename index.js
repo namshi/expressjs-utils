@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const json2csv = require('json2csv');
+const conversions = require('./conversions');
+const middlewares = require('./middlewares');
 
 function hc(app) {
   app.get('/public/hc', function(req, res) {
@@ -108,4 +110,6 @@ module.exports = {
   getRouter,
   httpError,
   serveCSV,
+  ...conversions,
+  ...middlewares
 }
