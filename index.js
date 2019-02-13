@@ -22,7 +22,7 @@ function detectApiVersionMiddleware(req, res, next) {
   next();
 }
 
-function static(app, path) {
+function statics(app, path) {
   path = path || '/../../public';
 
   app.use('/', express.static(__dirname + path));
@@ -104,7 +104,7 @@ function serveCSV(res, filename, rows) {
 
 module.exports = {
   hc,
-  static,
+  statics,
   errorHandler,
   start,
   getRouter,
