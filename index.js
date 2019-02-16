@@ -29,16 +29,8 @@ function static(app, path) {
   app.use('/', express.static(__dirname + path));
 }
 
-function translate(text, lang, translationObject) {
-  return _.get(translationObject, `${text}.${lang}`, text);
-}
-
 /**
- * Configures the app with an error handler
- * Config has a shape of {
- *  translationObject: Object,
- *  logger?: Object //preferably with a .error method attached
- * }
+ * Configures the app with an error handler.
  * A message and userMessage field is added to the error's json body. The userMessage is a translated
  * version of the message field if translation is properly configured for this middleware. You can set
  * both fields explicitly in the error response by setting err.data to the desired object.
@@ -59,13 +51,6 @@ function errorHandler(app, logger) {
     }
 
     const  translatedMessage = req.translate ? req.translate(err.message) : err.message
-    // const lang = (req.locale && req.locale.lang) ? req.locale.lang : 'en';
-    
-    // if(config && config.translationObject){
-    //   translatedMessage =  translate(err.message, lang, config.translationObject);
-    // } else {
-    //   translatedMessage = err.message
-    // }
 
     if (app.get('env') == 'dev' && !err.statusCode) {
       throw err;

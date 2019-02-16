@@ -8,6 +8,8 @@ describe('Express Utils', () => {
 
     describe('errorhandler', () => {
         const app = express()
+        app.use(utils.withLang(['en','ar'],'en','lang'))
+        app.use(utils.withTranslate(translationObject))
         app.get('/400', (req, res) => {
             const err = new Error()
             err.statusCode = 400
@@ -16,9 +18,6 @@ describe('Express Utils', () => {
         })
 
         app.get('/400/translated', (req, res) => {
-            req.locale = {
-                lang: 'ar'
-            }
             const err = new Error()
             err.statusCode = 400
             err.message = 'invalidCredentials'
@@ -26,9 +25,6 @@ describe('Express Utils', () => {
         })
 
         app.get('/400/untranslated', (req, res) => {
-            req.locale = {
-                lang: 'ar'
-            }
             const err = new Error()
             err.statusCode = 400
             err.message = 'untranslated'
@@ -39,10 +35,8 @@ describe('Express Utils', () => {
             const err = new Error()
             throw err
         })
-        utils.errorHandler(app, {
-            translationObject,
-            logger: console
-        })
+        
+        utils.errorHandler(app)
 
         it('should return with correct statusCode and body.message when middleware is applied', async () => {
             const resp = await request(app).get('/400')
@@ -57,7 +51,7 @@ describe('Express Utils', () => {
         })
 
         it('should return translated userMessage', async () => {
-            const resp = await request(app).get('/400/translated')
+            const resp = await request(app).get('/400/translated?locale=ar')
             assert.equal(resp.body.userMessage, 'كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح')
             assert.equal(resp.statusCode, 400)
         })
