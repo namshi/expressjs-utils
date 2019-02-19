@@ -2,14 +2,16 @@ const express = require('express')
 const request = require('supertest')
 const assert = require('assert')
 const utils = require('../index')
-const translationObject = require('./translations')
+const translations = require('./translations')
 
 describe('Express Utils', () => {
 
     describe('errorhandler', () => {
         const app = express()
-        app.use(utils.withLang(['en','ar'],'en','lang'))
-        app.use(utils.withTranslate(translationObject))
+        app.use(utils.withTranslate({translations, 
+            defaultlang: 'en', 
+            localeQueryKey: 'locale'}))
+
         app.get('/400', (req, res) => {
             const err = new Error()
             err.statusCode = 400

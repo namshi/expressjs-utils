@@ -2,7 +2,7 @@
 const expect = require('chai').expect;
 const conversions = require('../conversions');
 
-describe('conversions()', function () {
+describe('jsonOr', function () {
   it('should an object if passed an object', function () {
       expect(conversions.jsonOr("{}")).to.be.eql({});
       expect(conversions.jsonOr('{"a":1}')).to.be.eql({a:1});
