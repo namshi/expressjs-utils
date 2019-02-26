@@ -38,7 +38,9 @@ describe('Express Utils', () => {
             throw err
         })
         
-        utils.errorHandler(app)
+        utils.errorHandler(app, {
+            error: () => false
+        })
 
         it('should return with correct statusCode and body.message when middleware is applied', async () => {
             const resp = await request(app).get('/400')
