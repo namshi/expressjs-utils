@@ -1,5 +1,5 @@
 # expressjs-utils
-This module contains a set of utilities that make our life easier while writing express apps.
+This module contains a set of utilities that make our life easier while writing express apps. The minimum supported node version for this lib is v8.6.0.
 
 ## Installation
 
