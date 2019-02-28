@@ -1,6 +1,12 @@
 const express = require('express');
 const http = require('http');
 const json2csv = require('json2csv');
+const conversions = require('./conversions');
+const middlewares = require('./middlewares');
+const _ = require('lodash');
+
+//FP
+const pipe = (...fn) => input => fn.reduce((chain, func) => chain instanceof Promise ? chain.then(func) : func(chain), input);
 
 function hc(app) {
   app.get('/public/hc', function(req, res) {
@@ -26,12 +32,19 @@ function static(app, path) {
   app.use('/', express.static(__dirname + path));
 }
 
+/**
+ * Configures the app with an error handler.
+ * A message and userMessage field is added to the error's json body. The userMessage is a translated
+ * version of the message field if translation is properly configured for this middleware. You can set
+ * both fields explicitly in the error response by setting err.data to the desired object.
+ */
 function errorHandler(app, logger) {
   app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500
+    err.message = err.message ? err.message : 'Empty error message'
 
     if (logger) {
-      logger.error(err, {
+      logger.error && logger.error(err, {
          status: statusCode,
          method: req.method,
          route: req.path,
@@ -39,6 +52,8 @@ function errorHandler(app, logger) {
     } else {
       console.error(err);
     }
+
+    const  translatedMessage = req.translate ? req.translate(err.message) : err.message
 
     if (app.get('env') == 'dev' && !err.statusCode) {
       throw err;
@@ -49,7 +64,8 @@ function errorHandler(app, logger) {
       return
     }
 
-    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error'});
+    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error', 
+      userMessage: err.statusCode ? translatedMessage : 'Internal Server Error'});
   });
 }
 
@@ -108,4 +124,7 @@ module.exports = {
   getRouter,
   httpError,
   serveCSV,
+  pipe,
+  ...conversions,
+  ...middlewares
 }
