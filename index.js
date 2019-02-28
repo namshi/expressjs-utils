@@ -5,6 +5,9 @@ const conversions = require('./conversions');
 const middlewares = require('./middlewares');
 const _ = require('lodash');
 
+//FP
+const pipe = (...fn) => input => fn.reduce((chain, func) => chain instanceof Promise ? chain.then(func) : func(chain), input);
+
 function hc(app) {
   app.get('/public/hc', function(req, res) {
     res.end('OK');
@@ -121,6 +124,7 @@ module.exports = {
   getRouter,
   httpError,
   serveCSV,
+  pipe,
   ...conversions,
   ...middlewares
 }

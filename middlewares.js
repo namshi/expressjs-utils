@@ -9,9 +9,9 @@ const withDataOr = R.curry((key, defaultValue, req, res, next) => {
 });
 
 const withTranslate = R.curry(({
-    translations, 
-    defaultLang, 
-    localeHeaderKey, 
+    translations,
+    defaultLang,
+    localeHeaderKey,
     localeQueryKey }, req, res, next) => {
 
     const localeSplit = ((req.query && _.get(req.query, localeQueryKey, null)) || (req.headers && req.headers[localeHeaderKey]) || '').toLowerCase().split(/[-_]/g);
