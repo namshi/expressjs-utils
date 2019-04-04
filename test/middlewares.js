@@ -47,9 +47,7 @@ describe("withTranslate()", function() {
       defaultLang: "en"
     });
     translateMiddleware(req, res, next);
-    expect(req.translate("invalidCredentials")).to.be.equal(
-      "Incorrect email or password"
-    );
+    expect(req.translate("invalidCredentials")).to.be.equal("Incorrect email or password");
   });
 
   it("should use the default language if no language is passed even when query param settings are set in config", () => {
@@ -60,9 +58,7 @@ describe("withTranslate()", function() {
       localeQueryKey: "locale"
     });
     translateMiddleware(req, res, next);
-    expect(req.translate("invalidCredentials")).to.be.equal(
-      "Incorrect email or password"
-    );
+    expect(req.translate("invalidCredentials")).to.be.equal("Incorrect email or password");
   });
 
   it("should use the default language if no language is passed even when header key settings are set in config", () => {
@@ -73,9 +69,7 @@ describe("withTranslate()", function() {
       localeHeaderKey: "locale"
     });
     translateMiddleware(req, res, next);
-    expect(req.translate("invalidCredentials")).to.be.equal(
-      "Incorrect email or password"
-    );
+    expect(req.translate("invalidCredentials")).to.be.equal("Incorrect email or password");
   });
 
   it("should use the query param settings for lang when no header is passed", () => {
@@ -86,9 +80,7 @@ describe("withTranslate()", function() {
       localeQueryKey: "lang"
     });
     translateMiddleware(req, res, next);
-    expect(req.translate("invalidCredentials")).to.be.equal(
-      "كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح"
-    );
+    expect(req.translate("invalidCredentials")).to.be.equal("كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح");
   });
 
   it("should use the header locale settings when no query params", () => {
@@ -99,17 +91,13 @@ describe("withTranslate()", function() {
       localeHeaderKey: "locale"
     });
     translateMiddleware(req, res, next);
-    expect(req.translate("invalidCredentials")).to.be.equal(
-      "كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح"
-    );
+    expect(req.translate("invalidCredentials")).to.be.equal("كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح");
   });
 
   it.skip("should have a translate function", function() {
     const req = { lang: "ar" };
     const translateMiddleware = middlewares.withTranslate(translations);
     translateMiddleware(req, res, next);
-    expect(req.translate("invalidCredentials")).to.be.equal(
-      "كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح"
-    );
+    expect(req.translate("invalidCredentials")).to.be.equal("كلمة السر / البريد الالكتروني الذي تم إدخاله غير صحيح");
   });
 });

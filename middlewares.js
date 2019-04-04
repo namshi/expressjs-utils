@@ -12,35 +12,23 @@ const hasContentTypes = (
   contentTypes,
   { status = 415, msg = { type: "error", msg: `Unsuported media type` } } = {}
 ) => ({ headers }, res, next) =>
-  (!contentTypes.includes(headers["content-type"]) &&
-    res.status(status).send(msg)) ||
-  next();
+  (!contentTypes.includes(headers["content-type"]) && res.status(status).send(msg)) || next();
 
-const withTranslate = R.curry(
-  (
-    { translations, defaultLang, localeHeaderKey, localeQueryKey },
-    req,
-    res,
-    next
-  ) => {
-    const localeSplit = (
-      (req.query && _.get(req.query, localeQueryKey, null)) ||
-      (req.headers && req.headers[localeHeaderKey]) ||
-      ""
-    )
-      .toLowerCase()
-      .split(/[-_]/g);
-    req.lang = (localeSplit && localeSplit[0]) || defaultLang;
-    const { lang } = req;
-    req.translate = (text, args = []) => {
-      const translation =
-        translations[text] && translations[text][lang]
-          ? translations[text][lang]
-          : text;
-      return args.length ? vsprintf(translation, args) : translation;
-    };
-    next();
-  }
-);
+const withTranslate = R.curry(({ translations, defaultLang, localeHeaderKey, localeQueryKey }, req, res, next) => {
+  const localeSplit = (
+    (req.query && _.get(req.query, localeQueryKey, null)) ||
+    (req.headers && req.headers[localeHeaderKey]) ||
+    ""
+  )
+    .toLowerCase()
+    .split(/[-_]/g);
+  req.lang = (localeSplit && localeSplit[0]) || defaultLang;
+  const { lang } = req;
+  req.translate = (text, args = []) => {
+    const translation = translations[text] && translations[text][lang] ? translations[text][lang] : text;
+    return args.length ? vsprintf(translation, args) : translation;
+  };
+  next();
+});
 
 module.exports = { withDataOr, withTranslate, hasContentTypes };
