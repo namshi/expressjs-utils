@@ -34,7 +34,7 @@ describe("hasContentTypes()", function() {
     expect(m(req, res, next)).to.be.eql({
       status: 415,
       type: "error",
-      msg: "Unsuported media type"
+      msg: "Unsuported context-type"
     });
   });
 });

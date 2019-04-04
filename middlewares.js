@@ -10,7 +10,7 @@ const withDataOr = R.curry((key, defaultValue, req, res, next) => {
 
 const hasContentTypes = (
   contentTypes,
-  { status = 415, msg = { type: "error", msg: `Unsuported media type` } } = {}
+  { status = 415, msg = { type: "error", msg: `Unsuported context-type` } } = {}
 ) => ({ headers }, res, next) =>
   (!contentTypes.includes(headers["content-type"]) && res.status(status).send(msg)) || next();
 
