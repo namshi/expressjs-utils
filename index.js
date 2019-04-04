@@ -1,16 +1,17 @@
-const express = require('express');
-const http = require('http');
-const json2csv = require('json2csv');
-const conversions = require('./conversions');
-const middlewares = require('./middlewares');
-const _ = require('lodash');
+const express = require("express");
+const http = require("http");
+const json2csv = require("json2csv");
+const conversions = require("./conversions");
+const middlewares = require("./middlewares");
+const _ = require("lodash");
 
 //FP
-const pipe = (...fn) => input => fn.reduce((chain, func) => chain instanceof Promise ? chain.then(func) : func(chain), input);
+const pipe = (...fn) => input =>
+  fn.reduce((chain, func) => (chain instanceof Promise ? chain.then(func) : func(chain)), input);
 
 function hc(app) {
-  app.get('/public/hc', function(req, res) {
-    res.end('OK');
+  app.get("/public/hc", function(req, res) {
+    res.end("OK");
   });
 }
 
@@ -20,16 +21,16 @@ function hc(app) {
  * URL parameters.
  */
 function detectApiVersionMiddleware(req, res, next) {
-  let version = parseInt(req.headers['n-api-version']) || parseInt(req.params.apiVersion) || 0;
+  let version = parseInt(req.headers["n-api-version"]) || parseInt(req.params.apiVersion) || 0;
   req.apiVersion = res.apiVersion = version;
 
   next();
 }
 
 function static(app, path) {
-  path = path || '/../../public';
+  path = path || "/../../public";
 
-  app.use('/', express.static(__dirname + path));
+  app.use("/", express.static(__dirname + path));
 }
 
 /**
@@ -40,55 +41,58 @@ function static(app, path) {
  */
 function errorHandler(app, logger) {
   app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500
-    err.message = err.message ? err.message : 'Empty error message'
+    const statusCode = err.statusCode || 500;
+    err.message = err.message ? err.message : "Empty error message";
 
     if (logger) {
-      logger.error && logger.error(err, {
-         status: statusCode,
-         method: req.method,
-         route: req.path,
-      })
+      logger.error &&
+        logger.error(err, {
+          status: statusCode,
+          method: req.method,
+          route: req.path
+        });
     } else {
       console.error(err);
     }
 
-    const  translatedMessage = req.translate ? req.translate(err.message) : err.message
+    const translatedMessage = req.translate ? req.translate(err.message) : err.message;
 
-    if (app.get('env') == 'dev' && !err.statusCode) {
+    if (app.get("env") == "dev" && !err.statusCode) {
       throw err;
     }
 
     if (err.data) {
-      res.status(statusCode).send(err.data)
-      return
+      res.status(statusCode).send(err.data);
+      return;
     }
 
-    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error', 
-      userMessage: err.statusCode ? translatedMessage : 'Internal Server Error'});
+    res.status(statusCode).send({
+      message: err.statusCode ? err.message : "Internal Server Error",
+      userMessage: err.statusCode ? translatedMessage : "Internal Server Error"
+    });
   });
 }
 
 function start(app, port, env) {
-  env = env || process.env.NODE_ENV
-  port = port || 8082
-  if (env !== 'test') {
+  env = env || process.env.NODE_ENV;
+  port = port || 8082;
+  if (env !== "test") {
     app.listen(port, () => {
       console.log(`Server started on port ${port}`);
     });
   }
 
-  return app
+  return app;
 }
 
 function getRouter(app, svc) {
-  let router = express.Router({mergeParams: true})
+  let router = express.Router({ mergeParams: true });
   app.use(`/${svc}`, router);
   let version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
   app.use(version, router);
   router.use(detectApiVersionMiddleware);
 
-  return router
+  return router;
 }
 
 /**
@@ -101,7 +105,7 @@ function httpError(code = 500, message = http.STATUS_CODES[code]) {
   err.statusCode = code;
   err.message = message;
 
-  if (typeof message === 'object') {
+  if (typeof message === "object") {
     err.message = JSON.stringify(message);
     err.data = message;
   }
@@ -110,8 +114,8 @@ function httpError(code = 500, message = http.STATUS_CODES[code]) {
 }
 
 function serveCSV(res, filename, rows) {
-  res.set('Content-Type', 'text/csv');
-  res.set('Content-disposition', `attachment; filename=${filename}`);
+  res.set("Content-Type", "text/csv");
+  res.set("Content-disposition", `attachment; filename=${filename}`);
 
   return res.send(json2csv({ data: rows }));
 }
@@ -127,4 +131,4 @@ module.exports = {
   pipe,
   ...conversions,
   ...middlewares
-}
+};
