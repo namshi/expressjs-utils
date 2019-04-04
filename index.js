@@ -1,9 +1,9 @@
+/*global __dirname process */
 const express = require("express");
 const http = require("http");
 const json2csv = require("json2csv");
 const conversions = require("./conversions");
 const middlewares = require("./middlewares");
-const _ = require("lodash");
 
 //FP
 const pipe = (...fn) => input =>
@@ -40,6 +40,7 @@ function static(app, path) {
  * both fields explicitly in the error response by setting err.data to the desired object.
  */
 function errorHandler(app, logger) {
+  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     err.message = err.message ? err.message : "Empty error message";
