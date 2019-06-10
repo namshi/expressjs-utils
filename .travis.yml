@@ -1,0 +1,10 @@
+dist: trusty
+sudo: true
+language: node_js
+install:
+  - npm install
+node_js:
+  - "8"
+script:
+  - npm run ci
+cache: npm

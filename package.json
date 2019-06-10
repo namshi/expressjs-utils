@@ -7,6 +7,7 @@
     "fmt": "./node_modules/prettier/bin-prettier.js *.js */**.js --write",
     "lint": "./node_modules/standard/bin/cmd.js --fix ./ &&  ./node_modules/eslint/bin/eslint.js ./ --fix",
     "coverage": "nyc --reporter=lcov --reporter=text-lcov mocha",
+    "ci": "npm run fmt && npm run lint && npm test",
     "test": "nyc mocha"
   },
   "repository": {
