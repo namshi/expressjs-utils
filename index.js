@@ -1,17 +1,18 @@
-/*global __dirname process */
+/*global __dirname */
 const express = require("express");
 const http = require("http");
 const json2csv = require("json2csv");
 const conversions = require("./conversions");
 const middlewares = require("./middlewares");
 const config = require("./config");
+const { envOr } = require("./utils");
 
 //FP
 const pipe = (...fn) => input =>
   fn.reduce((chain, func) => (chain instanceof Promise ? chain.then(func) : func(chain)), input);
 
 function hc(app) {
-  app.get("/public/hc", function(req, res) {
+  app.get("/public/hc", (req, res) => {
     res.end("OK");
   });
 }
@@ -22,16 +23,15 @@ function hc(app) {
  * URL parameters.
  */
 function detectApiVersionMiddleware(req, res, next) {
-  let version = parseInt(req.headers["n-api-version"]) || parseInt(req.params.apiVersion) || 0;
+  const version = parseInt(req.headers["n-api-version"], 10) || parseInt(req.params.apiVersion, 10) || 0;
   req.apiVersion = res.apiVersion = version;
 
   next();
 }
 
 function static(app, path) {
-  path = path || "/../../public";
-
-  app.use("/", express.static(__dirname + path));
+  const npath = path || "/../../public";
+  app.use("/", express.static(path.join(__dirname, npath)));
 }
 
 /**
@@ -46,20 +46,19 @@ function errorHandler(app, logger) {
     const statusCode = err.statusCode || 500;
     err.message = err.message ? err.message : "Empty error message";
 
-    if (logger) {
-      logger.error &&
-        logger.error(err, {
-          status: statusCode,
-          method: req.method,
-          route: req.path
-        });
+    if (logger && logger.error) {
+      logger.error(err, {
+        status: statusCode,
+        method: req.method,
+        route: req.path
+      });
     } else {
       console.error(err);
     }
 
     const translatedMessage = req.translate ? req.translate(err.message) : err.message;
 
-    if (app.get("env") == "dev" && !err.statusCode) {
+    if (app.get("env") === "dev" && !err.statusCode) {
       throw err;
     }
 
@@ -75,9 +74,7 @@ function errorHandler(app, logger) {
   });
 }
 
-function start(app, port, env) {
-  env = env || process.env.NODE_ENV;
-  port = port || 8082;
+function start(app, port = 8082, env = envOr("node_env", "")) {
   if (env !== "test") {
     app.listen(port, () => {
       console.log(`Server started on port ${port}`);
@@ -88,9 +85,9 @@ function start(app, port, env) {
 }
 
 function getRouter(app, svc) {
-  let router = express.Router({ mergeParams: true });
+  const router = express.Router({ mergeParams: true });
   app.use(`/${svc}`, router);
-  let version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
+  const version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
   app.use(version, router);
   router.use(detectApiVersionMiddleware);
 
@@ -103,7 +100,7 @@ function getRouter(app, svc) {
  * meaning their message can be displayed on the API.
  */
 function httpError(code = 500, message = http.STATUS_CODES[code]) {
-  let err = new Error();
+  const err = new Error();
   err.statusCode = code;
   err.message = message;
 

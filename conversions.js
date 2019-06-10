@@ -20,9 +20,7 @@ const unsignedFloatOr = value =>
     toFloatOr(value)
   );
 
-const setPrecisionOr = R.curry((digits, defValue, num) => {
-  return toFloat(toFloatOr(defValue, num).toFixed(digits));
-});
+const setPrecisionOr = R.curry((digits, defValue, num) => toFloat(toFloatOr(defValue, num).toFixed(digits)));
 
 const jsonOr = R.curry((value, defaultValue = {}) => {
   if (!isNaN(value)) {

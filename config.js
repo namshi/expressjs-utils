@@ -7,6 +7,7 @@ const { envOr } = require("./utils");
 
 let data = null;
 
+// eslint-disable-next-line no-sync
 const loadFile = (filename = "config.json", { logger = console, fileLoader = fs.readFileSync } = {}) => {
   try {
     const content = JSON.parse(
