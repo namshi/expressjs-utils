@@ -2,7 +2,7 @@ const expect = require("chai").expect;
 const rewire = require("rewire");
 const config = rewire("../config");
 
-const loadFile = config.__get__("loadFile");
+const loadConfig = config.__get__("loadConfig");
 const logger = {
   error: function(...msg) {
     this.msg = msg.join("");
@@ -20,6 +20,10 @@ describe("patterns", function() {
       const conf = require("../config")("filename.json", () => ({ a: 1 }));
       expect(conf("a")).to.be.equal(1);
     });
+    it("should return the entire object if no key passed", function() {
+      const conf = require("../config")("filename.json", () => ({ a: 1 }));
+      expect(conf()).deep.equal({ a: 1 });
+    });
     it("should return an error if value of the key does not exist", function() {
       const conf = require("../config")("config.json", () => ({ a: 1 }));
       expect(_ => conf("b")).to.throw("Config -> Key b not found.");
@@ -27,18 +31,18 @@ describe("patterns", function() {
   });
   describe(".loadConfig", function() {
     it("should load the json passed", function() {
-      const output = loadFile("filename.json", { logger, fileLoader: () => '{"a":1}' });
+      const output = loadConfig("filename.json", { logger, fileLoader: () => '{"a":1}' });
       expect(output).deep.equal({ a: 1 });
       expect(logger.get()).equal(undefined);
     });
     it("should crash if anything different than an object is passed", function() {
-      expect(_ => loadFile("filename.json", { logger, fileLoader: () => 3 })).to.throw(
+      expect(_ => loadConfig("filename.json", { logger, fileLoader: () => 3 })).to.throw(
         "Config -> filename.json content must be an object."
       );
     });
     it("should log a parse error without crashing if there is data", function() {
-      loadFile("filename.json", { logger, fileLoader: () => '{"a":1}' });
-      const output = loadFile("filename.json", {
+      loadConfig("filename.json", { logger, fileLoader: () => '{"a":1}' });
+      const output = loadConfig("filename.json", {
         logger,
         fileLoader: () => {
           throw Error("something happened!");

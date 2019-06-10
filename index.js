@@ -74,10 +74,10 @@ function errorHandler(app, logger) {
   });
 }
 
-function start(app, port = 8082, env = envOr("node_env", "")) {
+function start(app, log = console, port = 8082, env = envOr("node_env", "")) {
   if (env !== "test") {
     app.listen(port, () => {
-      console.log(`Server started on port ${port}`);
+      log.info(`Server started on port ${port}`);
     });
   }
 

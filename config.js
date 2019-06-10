@@ -8,7 +8,7 @@ const { envOr } = require("./utils");
 let data = null;
 
 // eslint-disable-next-line no-sync
-const loadFile = (filename = "config.json", { logger = console, fileLoader = fs.readFileSync } = {}) => {
+const loadConfig = (filename = "config.json", { logger = console, fileLoader = fs.readFileSync } = {}) => {
   try {
     const content = JSON.parse(
       fileLoader(filename && filename.startsWith("..") ? `${path.join(__dirname, filename)}` : filename, "utf8")
@@ -25,12 +25,18 @@ const loadFile = (filename = "config.json", { logger = console, fileLoader = fs.
   return data;
 };
 
-const cachedLoader = memoizee(loadFile, { maxAge: envOr("config_ttl", 60000, parseInt) });
+const cachedLoader = memoizee(loadConfig, { maxAge: envOr("config_ttl", 60000, parseInt) });
 
 module.exports = (filename, loader = cachedLoader) => (key, def) => {
-  const value = _.get(loader(filename), key, def);
+  const config = loader(filename);
+  if (!key) {
+    return config;
+  }
+  const value = _.get(config, key, def);
+
   if (typeof value === "undefined") {
     throw Error(`Config -> Key ${key} not found.`);
   }
+
   return value;
 };
