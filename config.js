@@ -1,27 +1,35 @@
-/* global __dirname process*/
+/* global __dirname */
 const memoizee = require("memoizee");
 const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
+const { envOr } = require("./utils");
 
-/*
- * const config = require('expressjs-utils/config')('./conf.json');
- */
-const loadConfig = (file, override = {}, logger = console) => {
+let data = null;
+
+const loadFile = (filename = "config.json", { logger = console, fileLoader = fs.readFileSync } = {}) => {
   try {
     const content = JSON.parse(
-      fs.readFileSync(file && file.startsWith("..") ? `${path.join(__dirname, file)}` : file, "utf8")
+      fileLoader(filename && filename.startsWith("..") ? `${path.join(__dirname, filename)}` : filename, "utf8")
     );
     if (typeof content === "object") {
-      this.data = content;
+      data = content;
     }
   } catch (err) {
-    logger.error(`loadConfig -> Cannot load the config file: ${file}, error:`, err);
+    logger.error(`Config -> Cannot load or parse the file ${filename}, reason `, err);
   }
-  if (typeof this.data !== "object") {
-    throw Error(`loadConfig -> Failed to boot config file: ${file}.`);
+  if (typeof data !== "object" || data === null) {
+    throw Error(`Config -> ${filename} content must be an object.`);
   }
-  return _.partial(_.get, { ...this.data, ...override });
+  return data;
 };
 
-module.exports = memoizee(loadConfig, { maxAge: process.env.READ_CONFIG_TIMEOUT || 60000 });
+const cachedLoader = memoizee(loadFile, { maxAge: envOr("config_ttl", 60000, parseInt) });
+
+module.exports = (filename, loader = cachedLoader) => (key, def) => {
+  const value = _.get(loader(filename), key, def);
+  if (typeof value === "undefined") {
+    throw Error(`Config -> Key ${key} not found.`);
+  }
+  return value;
+};

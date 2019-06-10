@@ -37,8 +37,12 @@ describe("conversions", function() {
     expect(conversions.toIntOr(0, "x1")).to.be.equal(0);
   });
   it("should parseNum to a int if positive or 0", function() {
-    expect(conversions.unsignedOr(0, 1)).to.be.equal(1);
-    expect(conversions.unsignedOr(0, -1)).to.be.equal(0);
+    expect(conversions.unsignedIntOr(0)(1)).to.be.equal(1);
+    expect(conversions.unsignedIntOr(0)(-1)).to.be.equal(0);
+  });
+  it("should parseNum to a float if positive or 0", function() {
+    expect(conversions.unsignedFloatOr(0)(1.1)).to.be.equal(1.1);
+    expect(conversions.unsignedFloatOr(0)(-1.1)).to.be.equal(0);
   });
   it("should an object if passed an object", function() {
     expect(conversions.jsonOr("{}")).to.be.eql({});

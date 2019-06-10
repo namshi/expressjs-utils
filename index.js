@@ -4,6 +4,7 @@ const http = require("http");
 const json2csv = require("json2csv");
 const conversions = require("./conversions");
 const middlewares = require("./middlewares");
+const config = require("./config");
 
 //FP
 const pipe = (...fn) => input =>
@@ -130,6 +131,7 @@ module.exports = {
   httpError,
   serveCSV,
   pipe,
+  config,
   ...conversions,
   ...middlewares
 };
