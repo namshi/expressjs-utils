@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="generator" content="JSDoc 3.6.2" />
+    <meta charset="utf-8" />
+    <title>expressjs-utils 2.1.0 &raquo; Module: conversion</title>
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Karla:400,400i,700,700i" type="text/css" />
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Noto+Serif:400,400i,700,700i" type="text/css" />
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Inconsolata:500" type="text/css" />
+    <link href="css/baseline.css" rel="stylesheet" />
+  </head>
+
+  <body onload="prettyPrint()">
+    <nav id="jsdoc-navbar" role="navigation" class="jsdoc-navbar">
+      <div id="jsdoc-navbar-container">
+        <div id="jsdoc-navbar-content">
+          <a href="index.html" class="jsdoc-navbar-package-name">expressjs-utils 2.<wbr />1.<wbr />0</a>
+        </div>
+      </div>
+    </nav>
+    <div id="jsdoc-body-container">
+      <div id="jsdoc-content">
+        <div id="jsdoc-content-container">
+          <div id="jsdoc-main" role="main">
+            <header class="page-header">
+              <div class="symbol-detail-labels"><span class="label label-kind">module</span></div>
+              <h1><small></small><span class="symbol-name">conversion</span></h1>
+              <p class="source-link">
+                Source: <a href="conversions.js.html">conversions.<wbr />js</a>
+              </p>
+              <div class="symbol-description"></div>
+              <dl class="dl-compact"></dl>
+            </header>
+            <section id="summary">
+              <div class="summary-callout">
+                <h2 class="summary-callout-heading">Methods</h2>
+                <div class="summary-content">
+                  <div class="summary-column">
+                    <dl class="dl-summary-callout">
+                      <dt><a href="module-conversion.html#~jsonOr">jsonOr(data)</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~orDefault">orDefault()</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~setPrecisionOr">setPrecisionOr()</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~toFloat">toFloat()</a></dt>
+                      <dd></dd>
+                    </dl>
+                  </div>
+                  <div class="summary-column">
+                    <dl class="dl-summary-callout">
+                      <dt><a href="module-conversion.html#~toFloatOr">toFloatOr(data)</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~toInt">toInt()</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~toIntOr">toIntOr(data)</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~unsignedFloatOr">unsignedFloatOr()</a></dt>
+                      <dd></dd>
+                    </dl>
+                  </div>
+                  <div class="summary-column">
+                    <dl class="dl-summary-callout">
+                      <dt><a href="module-conversion.html#~unsignedIntOr">unsignedIntOr()</a></dt>
+                      <dd></dd>
+                      <dt><a href="module-conversion.html#~unsignedOr">unsignedOr()</a></dt>
+                      <dd></dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section>
+              <h2>Methods</h2>
+              <section>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~jsonOr">
+                  <span class="symbol-name">jsonOr</span
+                  ><span class="signature"
+                    ><span class="signature-params">(data)</span>&nbsp;&rarr;
+                    <span class="signature-returns"> object</span></span
+                  >
+                </h3>
+                <p>Parses the given value to JSON or fails over a default value</p>
+                <section>
+                  <h4>Parameter</h4>
+                  <table class="jsdoc-details-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Optional</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <p>data</p>
+                        </td>
+                        <td>
+                          <p>any type</p>
+                        </td>
+                        <td>
+                          <p>&nbsp;</p>
+                        </td>
+                        <td>
+                          <p>Usually a json string</p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+                <dl class="dl-compact">
+                  <dt>Returns</dt>
+                  <dd>
+                    <p><code>object</code></p>
+                  </dd>
+                </dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~orDefault">
+                  <span class="symbol-name">orDefault</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Executes a function over the data and returns the default value if the function fails</p>
+                <dl class="dl-compact"></dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~setPrecisionOr">
+                  <span class="symbol-name">setPrecisionOr</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Sets the number of decimals for a given floar or fails over a default value</p>
+                <dl class="dl-compact"></dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~toFloat">
+                  <span class="symbol-name">toFloat</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Unary version of parseFloat</p>
+                <dl class="dl-compact"></dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~toFloatOr">
+                  <span class="symbol-name">toFloatOr</span
+                  ><span class="signature"
+                    ><span class="signature-params">(data)</span>&nbsp;&rarr;
+                    <span class="signature-returns"> float</span></span
+                  >
+                </h3>
+                <p>Parses the given value to a float or fails to the default value</p>
+                <section>
+                  <h4>Parameter</h4>
+                  <table class="jsdoc-details-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Optional</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <p>data</p>
+                        </td>
+                        <td>
+                          <p>any type</p>
+                        </td>
+                        <td>
+                          <p>&nbsp;</p>
+                        </td>
+                        <td>
+                          <p>usually a string float</p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+                <dl class="dl-compact">
+                  <dt>Returns</dt>
+                  <dd>
+                    <p><code>float</code></p>
+                  </dd>
+                </dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~toInt">
+                  <span class="symbol-name">toInt</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Unary version of parseInt</p>
+                <dl class="dl-compact"></dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~toIntOr">
+                  <span class="symbol-name">toIntOr</span
+                  ><span class="signature"
+                    ><span class="signature-params">(data)</span>&nbsp;&rarr;
+                    <span class="signature-returns"> int</span></span
+                  >
+                </h3>
+                <p>Parses the given value to a integer or fails to the default value</p>
+                <section>
+                  <h4>
+                    Example
+                  </h4>
+                  <div>
+                    <pre class="prettyprint"><code>toIntOr(&quot;33&quot;, 0) // Returns 33;
+toIntOr(&quot;x3x3&quot;, 0) // Returns 0;</code></pre>
+                  </div>
+                </section>
+                <section>
+                  <h4>Parameter</h4>
+                  <table class="jsdoc-details-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Optional</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <p>data</p>
+                        </td>
+                        <td>
+                          <p>any type</p>
+                        </td>
+                        <td>
+                          <p>&nbsp;</p>
+                        </td>
+                        <td>
+                          <p>usually a string int</p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+                <dl class="dl-compact">
+                  <dt>See also</dt>
+                  <dd>test/conversions.js</dd>
+                  <dt>Returns</dt>
+                  <dd>
+                    <p><code>int</code></p>
+                  </dd>
+                </dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~unsignedFloatOr">
+                  <span class="symbol-name">unsignedFloatOr</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Given a value parses it to a positive float and returns the default value if it can't</p>
+                <dl class="dl-compact"></dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~unsignedIntOr">
+                  <span class="symbol-name">unsignedIntOr</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Given a value parses it to a positive integer and returns the default value if it can't</p>
+                <dl class="dl-compact"></dl>
+                <div class="symbol-detail-labels"><span class="label label-inner">inner</span></div>
+                <h3 id="~unsignedOr">
+                  <span class="symbol-name">unsignedOr</span
+                  ><span class="signature"><span class="signature-params">()</span></span>
+                </h3>
+                <p>Given a number returns it only if it's positive</p>
+                <dl class="dl-compact"></dl>
+              </section>
+            </section>
+          </div>
+        </div>
+        <nav id="jsdoc-toc-nav" role="navigation"></nav>
+      </div>
+    </div>
+    <footer id="jsdoc-footer" class="jsdoc-footer">
+      <div id="jsdoc-footer-container">
+        <p>Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> 3.6.2 on June 11, 2019.</p>
+      </div>
+    </footer>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/jquery.cookie.js"></script>
+    <script src="scripts/tree.jquery.js"></script>
+    <script src="scripts/prettify.js"></script>
+    <script src="scripts/jsdoc-toc.js"></script>
+    <script src="scripts/linenumber.js"></script>
+    <script src="scripts/scrollanchor.js"></script>
+  </body>
+</html>

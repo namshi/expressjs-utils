@@ -1,13 +1,18 @@
+/* eslint-disable no-sync */
 /* global __dirname */
+/** @module config */
 const memoizee = require("memoizee");
 const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
 const { envOr } = require("./utils");
 
+/** Global state where we store the config */
 let data = null;
 
-// eslint-disable-next-line no-sync
+/** Loads a configuration file and fails over the previous loaded data. Crashes if there is no previous data
+ * @method
+ */
 const loadConfig = (filename = "config.json", { logger = console, fileLoader = fs.readFileSync } = {}) => {
   try {
     const content = JSON.parse(
@@ -25,9 +30,15 @@ const loadConfig = (filename = "config.json", { logger = console, fileLoader = f
   return data;
 };
 
+/** Cached version of loadConfig
+ * @method
+ */
 const cachedLoader = memoizee(loadConfig, { maxAge: envOr("config_ttl", 60000, parseInt) });
 
-module.exports = (filename, loader = cachedLoader) => (key, def) => {
+/** Loads the config and returns the passed key or the entire object if the key is empty. Crashes on not found key
+ * @method
+ */
+const getConf = (filename, loader = cachedLoader) => (key, def) => {
   const config = loader(filename);
   if (!key) {
     return config;
@@ -40,3 +51,4 @@ module.exports = (filename, loader = cachedLoader) => (key, def) => {
 
   return value;
 };
+module.exports = getConf;

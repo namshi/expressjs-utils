@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "fmt": "./node_modules/prettier/bin-prettier.js *.js */**.js --write",
-    "lint": "./node_modules/standard/bin/cmd.js --fix ./ &&  ./node_modules/eslint/bin/eslint.js ./ --fix",
+    "lint": "./node_modules/standard/bin/cmd.js --ignore-pattern docs --fix ./ &&  ./node_modules/eslint/bin/eslint.js --ignore-pattern docs --fix ./ ",
     "coverage": "nyc --reporter=lcov --reporter=text-lcov mocha",
     "ci": "npm run fmt && npm run lint && npm test",
+    "doc": "jsdoc -c .jsdoc.js .",
     "test": "nyc mocha"
   },
   "repository": {
@@ -41,6 +42,8 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "express": "^4.16.4",
+    "jsdoc": "^3.6.2",
+    "jsdoc-baseline": "^0.1.1",
     "nyc": "^14.1.1",
     "rewire": "^4.0.1",
     "standard": "^12.0.1",
@@ -51,7 +54,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && pretty-quick --staged"
+      "pre-commit": "npm run fmt && npm run lint && npm run doc && pretty-quick --staged"
     }
   }
 }

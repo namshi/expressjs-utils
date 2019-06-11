@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="generator" content="JSDoc 3.6.2" />
+    <meta charset="utf-8" />
+    <title>expressjs-utils 2.1.0 &raquo; Source: index.js</title>
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Karla:400,400i,700,700i" type="text/css" />
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Noto+Serif:400,400i,700,700i" type="text/css" />
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Inconsolata:500" type="text/css" />
+    <link href="css/baseline.css" rel="stylesheet" />
+  </head>
+
+  <body onload="prettyPrint()">
+    <nav id="jsdoc-navbar" role="navigation" class="jsdoc-navbar">
+      <div id="jsdoc-navbar-container">
+        <div id="jsdoc-navbar-content">
+          <a href="index.html" class="jsdoc-navbar-package-name">expressjs-utils 2.<wbr />1.<wbr />0</a>
+        </div>
+      </div>
+    </nav>
+    <div id="jsdoc-body-container">
+      <div id="jsdoc-content">
+        <div id="jsdoc-content-container">
+          <div id="jsdoc-banner" role="banner"></div>
+          <div id="jsdoc-main" role="main">
+            <header class="page-header">
+              <h1>Source: index.js</h1>
+            </header>
+            <article>
+              <pre class="prettyprint linenums"><code>/*global __dirname */
+const express &#x3D; require(&quot;express&quot;);
+const http &#x3D; require(&quot;http&quot;);
+const json2csv &#x3D; require(&quot;json2csv&quot;);
+const conversions &#x3D; require(&quot;./conversions&quot;);
+const middlewares &#x3D; require(&quot;./middlewares&quot;);
+const config &#x3D; require(&quot;./config&quot;);
+const { envOr } &#x3D; require(&quot;./utils&quot;);
+
+//FP
+const pipe &#x3D; (...fn) &#x3D;&gt; input &#x3D;&gt;
+  fn.reduce((chain, func) &#x3D;&gt; (chain instanceof Promise ? chain.then(func) : func(chain)), input);
+
+/**
+ * Exposes a public endpoint for health checks.
+ */
+function hc(app) {
+  app.get(&quot;/public/hc&quot;, (req, res) &#x3D;&gt; {
+    res.end(&quot;OK&quot;);
+  });
+}
+
+/**
+ * Detects the API version that&#x27;s been requested,
+ * either from the N-Api-Version header or the
+ * URL parameters.
+ */
+function detectApiVersionMiddleware(req, res, next) {
+  const version &#x3D; parseInt(req.headers[&quot;n-api-version&quot;], 10) || parseInt(req.params.apiVersion, 10) || 0;
+  req.apiVersion &#x3D; res.apiVersion &#x3D; version;
+
+  next();
+}
+
+/**
+ * Exposes a static files based on passed path
+ */
+function staticPath(app, path) {
+  const npath &#x3D; path || &quot;/../../public&quot;;
+  app.use(&quot;/&quot;, express.static(path.join(__dirname, npath)));
+}
+
+/**
+ * Configures the app with an error handler.
+ * A message and userMessage field is added to the error&#x27;s json body. The userMessage is a translated
+ * version of the message field if translation is properly configured for this middleware. You can set
+ * both fields explicitly in the error response by setting err.data to the desired object.
+ */
+function errorHandler(app, logger) {
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) &#x3D;&gt; {
+    const statusCode &#x3D; err.statusCode || 500;
+    err.message &#x3D; err.message ? err.message : &quot;Empty error message&quot;;
+
+    if (logger &amp;amp;&amp;amp; logger.error) {
+      logger.error(err, {
+        status: statusCode,
+        method: req.method,
+        route: req.path
+      });
+    } else {
+      console.error(err);
+    }
+
+    const translatedMessage &#x3D; req.translate ? req.translate(err.message) : err.message;
+
+    if (app.get(&quot;env&quot;) &#x3D;&#x3D;&#x3D; &quot;dev&quot; &amp;amp;&amp;amp; !err.statusCode) {
+      throw err;
+    }
+
+    if (err.data) {
+      res.status(statusCode).send(err.data);
+      return;
+    }
+
+    res.status(statusCode).send({
+      message: err.statusCode ? err.message : &quot;Internal Server Error&quot;,
+      userMessage: err.statusCode ? translatedMessage : &quot;Internal Server Error&quot;
+    });
+  });
+}
+/** Starts an http express server except on testing enviroment */
+function start(app, log &#x3D; console, port &#x3D; 8082, env &#x3D; envOr(&quot;node_env&quot;, &quot;&quot;)) {
+  if (env !&#x3D;&#x3D; &quot;test&quot;) {
+    app.listen(port, () &#x3D;&gt; {
+      log.info(&#x60;Server started on port ${port}&#x60;);
+    });
+  }
+
+  return app;
+}
+
+function getRouter(app, svc) {
+  const router &#x3D; express.Router({ mergeParams: true });
+  app.use(&#x60;/${svc}&#x60;, router);
+  const version &#x3D; svc ? &#x60;/${svc}/v:apiVersion&#x60; : &#x60;/v:apiVersion&#x60;;
+  app.use(version, router);
+  router.use(detectApiVersionMiddleware);
+
+  return router;
+}
+
+/**
+ * Convenient wrapper to throw an error that has
+ * an HTTP status code. These errors are public-friendly,
+ * meaning their message can be displayed on the API.
+ */
+function httpError(code &#x3D; 500, message &#x3D; http.STATUS_CODES[code]) {
+  const err &#x3D; new Error();
+  err.statusCode &#x3D; code;
+  err.message &#x3D; message;
+
+  if (typeof message &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    err.message &#x3D; JSON.stringify(message);
+    err.data &#x3D; message;
+  }
+
+  return err;
+}
+
+function serveCSV(res, filename, rows) {
+  res.set(&quot;Content-Type&quot;, &quot;text/csv&quot;);
+  res.set(&quot;Content-disposition&quot;, &#x60;attachment; filename&#x3D;${filename}&#x60;);
+
+  return res.send(json2csv({ data: rows }));
+}
+
+module.exports &#x3D; {
+  hc,
+  static: staticPath,
+  errorHandler,
+  start,
+  getRouter,
+  httpError,
+  serveCSV,
+  pipe,
+  config,
+  ...conversions,
+  ...middlewares
+};
+</code></pre>
+            </article>
+          </div>
+        </div>
+        <nav id="jsdoc-toc-nav" role="navigation"></nav>
+      </div>
+    </div>
+    <footer id="jsdoc-footer" class="jsdoc-footer">
+      <div id="jsdoc-footer-container">
+        <p>Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> 3.6.2 on June 11, 2019.</p>
+      </div>
+    </footer>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/jquery.cookie.js"></script>
+    <script src="scripts/tree.jquery.js"></script>
+    <script src="scripts/prettify.js"></script>
+    <script src="scripts/jsdoc-toc.js"></script>
+    <script src="scripts/linenumber.js"></script>
+    <script src="scripts/scrollanchor.js"></script>
+  </body>
+</html>

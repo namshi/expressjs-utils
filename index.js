@@ -11,6 +11,9 @@ const { envOr } = require("./utils");
 const pipe = (...fn) => input =>
   fn.reduce((chain, func) => (chain instanceof Promise ? chain.then(func) : func(chain)), input);
 
+/**
+ * Exposes a public endpoint for health checks.
+ */
 function hc(app) {
   app.get("/public/hc", (req, res) => {
     res.end("OK");
@@ -29,7 +32,10 @@ function detectApiVersionMiddleware(req, res, next) {
   next();
 }
 
-function static(app, path) {
+/**
+ * Exposes a static files based on passed path
+ */
+function staticPath(app, path) {
   const npath = path || "/../../public";
   app.use("/", express.static(path.join(__dirname, npath)));
 }
@@ -73,7 +79,7 @@ function errorHandler(app, logger) {
     });
   });
 }
-
+/** Starts an http express server except on testing enviroment */
 function start(app, log = console, port = 8082, env = envOr("node_env", "")) {
   if (env !== "test") {
     app.listen(port, () => {
@@ -121,7 +127,7 @@ function serveCSV(res, filename, rows) {
 
 module.exports = {
   hc,
-  static,
+  static: staticPath,
   errorHandler,
   start,
   getRouter,

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="generator" content="JSDoc 3.6.2" />
+    <meta charset="utf-8" />
+    <title>expressjs-utils 2.1.0 &raquo; Home</title>
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Karla:400,400i,700,700i" type="text/css" />
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Noto+Serif:400,400i,700,700i" type="text/css" />
+    <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Inconsolata:500" type="text/css" />
+    <link href="css/baseline.css" rel="stylesheet" />
+  </head>
+
+  <body onload="prettyPrint()">
+    <nav id="jsdoc-navbar" role="navigation" class="jsdoc-navbar">
+      <div id="jsdoc-navbar-container">
+        <div id="jsdoc-navbar-content">
+          <a href="index.html" class="jsdoc-navbar-package-name">expressjs-utils 2.<wbr />1.<wbr />0</a>
+        </div>
+      </div>
+    </nav>
+    <div id="jsdoc-body-container">
+      <div id="jsdoc-content">
+        <div id="jsdoc-content-container">
+          <div id="jsdoc-banner" role="banner"></div>
+          <div id="jsdoc-main" role="main">
+            <header class="page-header">
+              <h1>
+                expressjs-utils 2.1.0
+              </h1>
+            </header>
+            <article>
+              <h1>expressjs-utils</h1>
+              <p>
+                This module contains a set of utilities that make our life easier while writing express apps. The
+                minimum supported node version for this lib is v8.6.0.
+              </p>
+              <h2>Installation</h2>
+              <pre class="prettyprint source lang-bash"><code>$ yarn add expressjs-utils
+</code></pre>
+              <pre class="prettyprint source lang-bash"><code>$ npm install expressjs-utils
+</code></pre>
+              <h2>Usage</h2>
+              <pre class="prettyprint source lang-js"><code>
+  const utils = require('expressjs-utils');
+
+</code></pre>
+              <h3>start</h3>
+              <p><code>start(app, port, env)</code></p>
+              <p>starts the express server unless you're in the test env</p>
+              <pre
+                class="prettyprint source lang-js"
+              ><code>  // starts your app on port 8082 with environment set to 'test'
+  utils.start(app, 8082, 'test');
+
+</code></pre>
+              <h3>static</h3>
+              <p><code>static(app, path)</code></p>
+              <p>mounts the static, <code>/public</code> folder</p>
+              <pre
+                class="prettyprint source lang-js"
+              ><code>  // assuminc your public folder is located at '/../../public'
+  utils.static(app);
+
+  // if it is located somewhere else, just pass the path, relative to the current file.
+  utils.static(app, '/../public');
+
+</code></pre>
+              <h3>getRouter</h3>
+              <p><code>getRouter(app, prefix)</code></p>
+              <p>
+                returns a router that prefixes all routes at <code>/prefix</code> &amp; <code>/prefix/vX</code> or
+                <code>/vX</code>, where <code>X</code> is a specific version of your api. Use it for API versioning
+                &amp; when you need a common prefix. If no API version is passed, that is <code>vX</code> is not present
+                in the url, it will be set to 0 by default. You can access the API Version using
+                <code>req.apiVersion</code>.
+              </p>
+              <pre class="prettyprint source lang-js"><code>
+  let router = utils.getRouter(app, 'api');
+  router.get('/cars', (req, res, next) => {
+    return res.json({...});
+  });
+
+  // Possible endpoint formats
+  /api/v1/cars //req.apiVersion will be 1 here
+  /api/cars //req.apiVersion will be 0 here
+
+  let router = utils.getRouter(app, '');
+  router.get('/people', (req, res, next) => {
+    return res.json({...});
+  });
+
+  // Possible endpoint formats
+  /v1/people //req.apiVersion will be 1 here
+  /people   
+  //req.apiVersion will be 0 here
+
+</code></pre>
+              <h3>errorHandler</h3>
+              <p>
+                <code>errorHandler(app, logger)</code>
+                provides a generic error handler that can be used at the &quot;end&quot; of your app
+                <code>logger</code> is optional. If you want to use a logger that will give you a bit more details, you
+                should just get our <a href="https://github.com/namshi/lib-logger">open-source logger</a> and pass it to
+                the error handler and we will use it, instead of <code>console.error</code>, to log the error.
+              </p>
+              <pre class="prettyprint source lang-js"><code>  // Add this after all your routes
+  utils.errorHandler(app);
+
+  // Then in any route you can simply call next(err) whenever an error occurs
+  router.post('/cars', async(req, res, next) => {
+    try {
+      let result = await getCars();
+    } catch (err) {
+      next(err);
+    }
+  });
+
+</code></pre>
+              <h3>httpError</h3>
+              <p><code>httpError(code=500, message='Internal Server Error')</code></p>
+              <p>
+                Throws an error that has an HTTP status code. These errors are public-friendly, therefore their message
+                can be displayed on the API.
+              </p>
+              <p>The message parameter can either be a string or an object. For example,</p>
+              <pre
+                class="prettyprint source lang-js"
+              ><code>  let err = utils.httpError(404, {userMessage: 'This product was not found. Please try other products'});
+</code></pre>
+              <p>
+                Then, on the client you will be able to do <code>err.userMessage</code> providing that you use our
+                <code>errorHandler()</code>. Otherwise, you'll need to access your custom object via the
+                <code>data</code> attribute of the error object: <code>err.data.userMessage</code>
+              </p>
+              <pre
+                class="prettyprint source lang-js"
+              ><code>  // if you are using the error handler above, you can do something like this in
+  // any of your API endpoint
+  router.get('/users/:id', async(req, res, next) => {
+    try {
+      let user = await getUser(req.params.id);
+
+      if (!user) {
+        return next(utils.httpError(404, 'Not found'));
+      }
+    } catch (err) {
+      next(err);
+    }
+  });
+
+</code></pre>
+              <h3>serveCSV</h3>
+              <p><code>serveCSV(res, filename, rows)</code></p>
+              <p>returns a downloadable csv file built from &quot;rows&quot; which is an array of objects.</p>
+              <pre class="prettyprint source lang-js"><code>  router.get('/data', async(req, res, next) => {
+    let data = [{name: &quot;Test 0&quot;, age: 3}, {name: &quot;Test 1&quot;, age: 4}];
+
+    return utils.serveCSV(res, &quot;data.csv&quot;, data);
+  });
+
+</code></pre>
+              <h3>hc</h3>
+              <p><code>hc(app)</code></p>
+              <p>installs a health check route (/public/hc)</p>
+              <pre class="prettyprint source lang-js"><code>  utils.hc(app);
+</code></pre>
+            </article>
+            <div class="symbol-index">
+              <section>
+                <div class="symbol-index-content">
+                  <h2 id="config">config</h2>
+                  <div class="symbol-index-section">
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-config.html" class="!symbol-index-name">config</a>
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-config.html#~cachedLoader" class="!symbol-index-name"
+                            >config~<wbr />cachedLoader()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-config.html#~data" class="!symbol-index-name">config~<wbr />data</a>
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-config.html#~getConf" class="!symbol-index-name">config~<wbr />getConf()</a>
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-config.html#~loadConfig" class="!symbol-index-name"
+                            >config~<wbr />loadConfig()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section>
+                <div class="symbol-index-content">
+                  <h2 id="conversion">conversion</h2>
+                  <div class="symbol-index-section">
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html" class="!symbol-index-name">conversion</a>
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~jsonOr" class="!symbol-index-name"
+                            >conversion~<wbr />jsonOr(data)</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~orDefault" class="!symbol-index-name"
+                            >conversion~<wbr />orDefault()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~setPrecisionOr" class="!symbol-index-name"
+                            >conversion~<wbr />setPrecisionOr()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~toFloat" class="!symbol-index-name"
+                            >conversion~<wbr />toFloat()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~toFloatOr" class="!symbol-index-name"
+                            >conversion~<wbr />toFloatOr(data)</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~toInt" class="!symbol-index-name"
+                            >conversion~<wbr />toInt()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~toIntOr" class="!symbol-index-name"
+                            >conversion~<wbr />toIntOr(data)</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~unsignedFloatOr" class="!symbol-index-name"
+                            >conversion~<wbr />unsignedFloatOr()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~unsignedIntOr" class="!symbol-index-name"
+                            >conversion~<wbr />unsignedIntOr()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-conversion.html#~unsignedOr" class="!symbol-index-name"
+                            >conversion~<wbr />unsignedOr()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section>
+                <div class="symbol-index-content">
+                  <h2 id="middlewares">middlewares</h2>
+                  <div class="symbol-index-section">
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-middlewares.html" class="!symbol-index-name">middlewares</a>
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-middlewares.html#~hasContentTypes" class="!symbol-index-name"
+                            >middlewares~<wbr />hasContentTypes()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-middlewares.html#~withDataOr" class="!symbol-index-name"
+                            >middlewares~<wbr />withDataOr()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                        <dt class="symbol-index-name">
+                          <a href="module-middlewares.html#~withTranslate" class="!symbol-index-name"
+                            >middlewares~<wbr />withTranslate()</a
+                          >
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list"></dl>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section>
+                <div class="symbol-index-content">
+                  <h2 id="utils">utils</h2>
+                  <div class="symbol-index-section">
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-utils.html" class="!symbol-index-name">utils</a>
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list">
+                        <dt class="symbol-index-name">
+                          <a href="module-utils.html#~envOr" class="!symbol-index-name">utils~<wbr />envOr()</a>
+                        </dt>
+                        <dd></dd>
+                      </dl>
+                    </div>
+                    <div class="symbol-index-column">
+                      <dl class="symbol-index-list"></dl>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <nav id="jsdoc-toc-nav" role="navigation"></nav>
+      </div>
+    </div>
+    <footer id="jsdoc-footer" class="jsdoc-footer">
+      <div id="jsdoc-footer-container">
+        <p>Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> 3.6.2 on June 11, 2019.</p>
+      </div>
+    </footer>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/jquery.cookie.js"></script>
+    <script src="scripts/tree.jquery.js"></script>
+    <script src="scripts/prettify.js"></script>
+    <script src="scripts/jsdoc-toc.js"></script>
+    <script src="scripts/linenumber.js"></script>
+    <script src="scripts/scrollanchor.js"></script>
+  </body>
+</html>

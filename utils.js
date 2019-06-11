@@ -1,8 +1,12 @@
 /* global process */
+/** @module utils */
 
-// eslint-disable-next-line no-process-env
-const envOr = (key, def, fn = x => x, env = process.env) =>
-  fn(typeof key === "string" && env[key.toUpperCase()]) || def;
+/** Environment vars */
+const { env } = process;
+/** Returns and parses an environment var and if does not exists returns the default value
+ * @method
+ */
+const envOr = (key, def, fn = x => x, ienv = env) => fn(typeof key === "string" && ienv[key.toUpperCase()]) || def;
 
 module.exports = {
   envOr
