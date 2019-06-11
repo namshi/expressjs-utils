@@ -5,7 +5,8 @@ const json2csv = require("json2csv");
 const conversions = require("./conversions");
 const middlewares = require("./middlewares");
 const config = require("./config");
-const { envOr } = require("./utils");
+const utils = require("./utils");
+const { envOr } = utils;
 
 //FP
 const pipe = (...fn) => input =>
@@ -135,6 +136,7 @@ module.exports = {
   serveCSV,
   pipe,
   config,
+  ...utils,
   ...conversions,
   ...middlewares
 };
