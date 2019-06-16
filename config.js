@@ -36,10 +36,12 @@ const loadConfig = (filename = "config.json", { logger = console, fileLoader = f
 const cachedLoader = memoizee(loadConfig, { maxAge: envOr("config_ttl", 60000, parseInt) });
 
 /** Loads the config and returns the passed key or the entire object if the key is empty. Crashes on not found key
+ * @argument {String} filename file were config is located
+ * @argument {Object} [opt] options to pass like logger
  * @method
  */
 const getConf = (filename, opt, loader = cachedLoader) => (key, def) => {
-  const config = loader(filename,opt);
+  const config = loader(filename, opt);
   if (!key) {
     return config;
   }
