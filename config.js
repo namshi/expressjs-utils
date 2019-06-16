@@ -38,8 +38,8 @@ const cachedLoader = memoizee(loadConfig, { maxAge: envOr("config_ttl", 60000, p
 /** Loads the config and returns the passed key or the entire object if the key is empty. Crashes on not found key
  * @method
  */
-const getConf = (filename, loader = cachedLoader) => (key, def) => {
-  const config = loader(filename);
+const getConf = (filename, opt, loader = cachedLoader) => (key, def) => {
+  const config = loader(filename,opt);
   if (!key) {
     return config;
   }
