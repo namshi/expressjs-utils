@@ -5,7 +5,7 @@ const memoizee = require("memoizee");
 const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
-const { envOr } = require("./utils");
+const { intOr } = require("keyu");
 
 /** Global state where we store the config */
 let data = null;
@@ -33,24 +33,31 @@ const loadConfig = (filename = "config.json", { logger = console, fileLoader = f
 /** Cached version of loadConfig
  * @method
  */
-const cachedLoader = memoizee(loadConfig, { maxAge: envOr("config_ttl", 60000, parseInt) });
 
 /** Loads the config and returns the passed key or the entire object if the key is empty. Crashes on not found key
  * @argument {String} filename file were config is located
  * @argument {Object} [opt] options to pass like logger
  * @method
  */
-const getConf = (filename, opt, loader = cachedLoader) => (key, def) => {
-  const config = loader(filename, opt);
-  if (!key) {
-    return config;
-  }
-  const value = _.get(config, key, def);
+const getConf = (filename, iopt, iloader) => {
+  //Assume that you get the maxAge as a key value pair in opts: it can or cannot exist
+  const opt = { maxAge: 60000, ...iopt };
+  opt.maxAge = intOr(60000, opt.maxAge);
 
-  if (typeof value === "undefined") {
-    throw Error(`Config -> Key ${key} not found.`);
-  }
+  const loader = iloader || memoizee(loadConfig, opt);
 
-  return value;
+  return (key, def) => {
+    const config = loader(filename, opt);
+    if (!key) {
+      return config;
+    }
+    const value = _.get(config, key, def);
+
+    if (typeof value === "undefined") {
+      throw Error(`Config -> Key ${key} not found.`);
+    }
+    return value;
+  };
 };
+
 module.exports = getConf;
