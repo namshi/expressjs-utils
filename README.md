@@ -134,8 +134,11 @@ returns a downloadable csv file built from "rows" which is an array of objects.
 
     return utils.serveCSV(res, "data.csv", data);
   });
-
 ```
+
+### shared config
+
+
 ### hc
 `hc(app)`
 
