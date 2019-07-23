@@ -1,6 +1,6 @@
 {
   "name": "expressjs-utils",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Utilities that make our life easier while writing express apps",
   "main": "index.js",
   "scripts": {
