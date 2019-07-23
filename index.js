@@ -7,6 +7,7 @@ const middlewares = require("./middlewares");
 const config = require("./config");
 const utils = require("./utils");
 const { envOr } = utils;
+const path = require("path");
 
 //FP
 const pipe = (...fn) => input =>
@@ -36,8 +37,7 @@ function detectApiVersionMiddleware(req, res, next) {
 /**
  * Exposes a static files based on passed path
  */
-function staticPath(app, path) {
-  const npath = path || "/../../public";
+function staticPath(app, npath = "/../../public") {
   app.use("/", express.static(path.join(__dirname, npath)));
 }
 
