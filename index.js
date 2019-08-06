@@ -75,7 +75,7 @@ function errorHandler(app, logger) {
     }
 
     res.status(statusCode).send({
-      message: err.statusCode ? err.message : "Internal Server Error",
+      message: err.statusCode ? translatedMessage || err.message : "Internal Server Error",
       userMessage: err.statusCode ? translatedMessage : "Internal Server Error"
     });
   });
