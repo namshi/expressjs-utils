@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta name="generator" content="JSDoc 3.6.3">
+  <meta charset="utf-8">
+  <title>expressjs-utils 3.1.0 &raquo; Globals</title>
+  <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Karla:400,400i,700,700i" type="text/css">
+  <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Noto+Serif:400,400i,700,700i" type="text/css">
+  <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Inconsolata:500" type="text/css">
+  <link href="css/baseline.css" rel="stylesheet">
+</head>
+
+<body onload="prettyPrint()">
+  <nav id="jsdoc-navbar" role="navigation" class="jsdoc-navbar">
+    <div id="jsdoc-navbar-container">
+      <div id="jsdoc-navbar-content">
+        <a href="index.html" class="jsdoc-navbar-package-name">expressjs-utils 3.<wbr>1.<wbr>0</a>
+      </div>
+    </div>
+  </nav>
+  <div id="jsdoc-body-container">
+    <div id="jsdoc-content">
+      <div id="jsdoc-content-container">
+        <div id="jsdoc-main" role="main">
+          <h1>Globals</h1>
+          <section id="summary">
+            <div class="summary-callout">
+              <h2 class="summary-callout-heading">Methods</h2>
+              <div class="summary-content">
+                <div class="summary-column">
+                  <dl class="dl-summary-callout">
+                    <dt><a href="global.html#detectApiVersionMiddleware">detectApiVersionMiddleware()</a></dt>
+                    <dd>
+                    </dd>
+                    <dt><a href="global.html#errorHandler">errorHandler()</a></dt>
+                    <dd>
+                    </dd>
+                  </dl>
+                </div>
+                <div class="summary-column">
+                  <dl class="dl-summary-callout">
+                    <dt><a href="global.html#hc">hc()</a></dt>
+                    <dd>
+                    </dd>
+                    <dt><a href="global.html#httpError">httpError()</a></dt>
+                    <dd>
+                    </dd>
+                  </dl>
+                </div>
+                <div class="summary-column">
+                  <dl class="dl-summary-callout">
+                    <dt><a href="global.html#start">start()</a></dt>
+                    <dd>
+                    </dd>
+                    <dt><a href="global.html#staticPath">staticPath()</a></dt>
+                    <dd>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h2>Methods</h2>
+            <section>
+              <h3 id="detectApiVersionMiddleware"><span class="symbol-name">detectApiVersionMiddleware</span><span class="signature"><span class="signature-params">()</span></span></h3>
+              <p>Detects the API version that's been requested,
+                either from the N-Api-Version header or the
+                URL parameters.</p>
+              <dl class="dl-compact">
+              </dl>
+              <h3 id="errorHandler"><span class="symbol-name">errorHandler</span><span class="signature"><span class="signature-params">()</span></span></h3>
+              <p>Configures the app with an error handler.
+                A message and userMessage field is added to the error's json body. The userMessage is a translated
+                version of the message field if translation is properly configured for this middleware. You can set
+                both fields explicitly in the error response by setting err.data to the desired object.</p>
+              <dl class="dl-compact">
+              </dl>
+              <h3 id="hc"><span class="symbol-name">hc</span><span class="signature"><span class="signature-params">()</span></span></h3>
+              <p>Exposes a public endpoint for health checks.</p>
+              <dl class="dl-compact">
+              </dl>
+              <h3 id="httpError"><span class="symbol-name">httpError</span><span class="signature"><span class="signature-params">()</span></span></h3>
+              <p>Convenient wrapper to throw an error that has
+                an HTTP status code. These errors are public-friendly,
+                meaning their message can be displayed on the API.</p>
+              <dl class="dl-compact">
+              </dl>
+              <h3 id="start"><span class="symbol-name">start</span><span class="signature"><span class="signature-params">()</span></span></h3>
+              <p>Starts an http express server except on testing enviroment</p>
+              <dl class="dl-compact">
+              </dl>
+              <h3 id="staticPath"><span class="symbol-name">staticPath</span><span class="signature"><span class="signature-params">()</span></span></h3>
+              <p>Exposes a static files based on passed path</p>
+              <dl class="dl-compact">
+              </dl>
+            </section>
+          </section>
+        </div>
+      </div>
+      <nav id="jsdoc-toc-nav" role="navigation"></nav>
+    </div>
+  </div>
+  <footer id="jsdoc-footer" class="jsdoc-footer">
+    <div id="jsdoc-footer-container">
+      <p>
+        Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> 3.6.3 on July 29, 2019.
+      </p>
+    </div>
+  </footer>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/jquery.cookie.js"></script>
+  <script src="scripts/tree.jquery.js"></script>
+  <script src="scripts/prettify.js"></script>
+  <script src="scripts/jsdoc-toc.js"></script>
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/scrollanchor.js"></script>
+</body>
+
+</html>

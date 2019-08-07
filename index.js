@@ -1,16 +1,24 @@
-const express = require('express');
-const http = require('http');
-const json2csv = require('json2csv');
-const conversions = require('./conversions');
-const middlewares = require('./middlewares');
-const _ = require('lodash');
+/*global __dirname */
+const express = require("express");
+const http = require("http");
+const json2csv = require("json2csv");
+const conversions = require("./conversions");
+const middlewares = require("./middlewares");
+const config = require("./config");
+const utils = require("./utils");
+const { envOr } = utils;
+const path = require("path");
 
 //FP
-const pipe = (...fn) => input => fn.reduce((chain, func) => chain instanceof Promise ? chain.then(func) : func(chain), input);
+const pipe = (...fn) => input =>
+  fn.reduce((chain, func) => (chain instanceof Promise ? chain.then(func) : func(chain)), input);
 
+/**
+ * Exposes a public endpoint for health checks.
+ */
 function hc(app) {
-  app.get('/public/hc', function(req, res) {
-    res.end('OK');
+  app.get("/public/hc", (req, res) => {
+    res.end("OK");
   });
 }
 
@@ -20,16 +28,17 @@ function hc(app) {
  * URL parameters.
  */
 function detectApiVersionMiddleware(req, res, next) {
-  let version = parseInt(req.headers['n-api-version']) || parseInt(req.params.apiVersion) || 0;
+  const version = parseInt(req.headers["n-api-version"], 10) || parseInt(req.params.apiVersion, 10) || 0;
   req.apiVersion = res.apiVersion = version;
 
   next();
 }
 
-function static(app, path) {
-  path = path || '/../../public';
-
-  app.use('/', express.static(__dirname + path));
+/**
+ * Exposes a static files based on passed path
+ */
+function staticPath(app, npath = "/../../public") {
+  app.use("/", express.static(path.join(__dirname, npath)));
 }
 
 /**
@@ -39,56 +48,57 @@ function static(app, path) {
  * both fields explicitly in the error response by setting err.data to the desired object.
  */
 function errorHandler(app, logger) {
+  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500
-    err.message = err.message ? err.message : 'Empty error message'
+    const statusCode = err.statusCode || 500;
+    err.message = err.message ? err.message : "Empty error message";
 
-    if (logger) {
-      logger.error && logger.error(err, {
-         status: statusCode,
-         method: req.method,
-         route: req.path,
-      })
+    if (logger && logger.error) {
+      logger.error(err, {
+        status: statusCode,
+        method: req.method,
+        route: req.path
+      });
     } else {
       console.error(err);
     }
 
-    const  translatedMessage = req.translate ? req.translate(err.message) : err.message
+    const translatedMessage = req.translate ? req.translate(err.message) : err.message;
 
-    if (app.get('env') == 'dev' && !err.statusCode) {
+    if (app.get("env") === "dev" && !err.statusCode) {
       throw err;
     }
 
     if (err.data) {
-      res.status(statusCode).send(err.data)
-      return
+      res.status(statusCode).send(err.data);
+      return;
     }
 
-    res.status(statusCode).send({message: err.statusCode ? err.message : 'Internal Server Error', 
-      userMessage: err.statusCode ? translatedMessage : 'Internal Server Error'});
+    res.status(statusCode).send({
+      message: err.statusCode ? translatedMessage || err.message : "Internal Server Error",
+      userMessage: err.statusCode ? translatedMessage : "Internal Server Error"
+    });
   });
 }
-
-function start(app, port, env) {
-  env = env || process.env.NODE_ENV
-  port = port || 8082
-  if (env !== 'test') {
+/** Starts an http express server except on testing enviroment */
+function start(app, log = console, port = 8082, env = envOr("node_env", "")) {
+  if (env !== "test") {
     app.listen(port, () => {
-      console.log(`Server started on port ${port}`);
+      log.info(`Server started on port ${port}`);
     });
   }
 
-  return app
+  return app;
 }
 
 function getRouter(app, svc) {
-  let router = express.Router({mergeParams: true})
+  const router = express.Router({ mergeParams: true });
   app.use(`/${svc}`, router);
-  let version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
+  const version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
   app.use(version, router);
   router.use(detectApiVersionMiddleware);
 
-  return router
+  return router;
 }
 
 /**
@@ -97,11 +107,11 @@ function getRouter(app, svc) {
  * meaning their message can be displayed on the API.
  */
 function httpError(code = 500, message = http.STATUS_CODES[code]) {
-  let err = new Error();
+  const err = new Error();
   err.statusCode = code;
   err.message = message;
 
-  if (typeof message === 'object') {
+  if (typeof message === "object") {
     err.message = JSON.stringify(message);
     err.data = message;
   }
@@ -110,21 +120,23 @@ function httpError(code = 500, message = http.STATUS_CODES[code]) {
 }
 
 function serveCSV(res, filename, rows) {
-  res.set('Content-Type', 'text/csv');
-  res.set('Content-disposition', `attachment; filename=${filename}`);
+  res.set("Content-Type", "text/csv");
+  res.set("Content-disposition", `attachment; filename=${filename}`);
 
   return res.send(json2csv({ data: rows }));
 }
 
 module.exports = {
   hc,
-  static,
+  static: staticPath,
   errorHandler,
   start,
   getRouter,
   httpError,
   serveCSV,
   pipe,
+  config,
+  ...utils,
   ...conversions,
   ...middlewares
-}
+};
