@@ -91,8 +91,8 @@ function start(app, log = console, port = 8082, env = envOr("node_env", "")) {
   return app;
 }
 
-function getRouter(app, svc) {
-  const router = express.Router({ mergeParams: true });
+function getRouter(app, svc, expressLibrary = express) {
+  const router = expressLibrary.Router({ mergeParams: true });
   app.use(`/${svc}`, router);
   const version = svc ? `/${svc}/v:apiVersion` : `/v:apiVersion`;
   app.use(version, router);
