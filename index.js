@@ -55,6 +55,7 @@ function errorHandler(app, logger) {
 
     if (logger && logger.error) {
       logger.error(err, {
+        errorStack: err.stack,
         status: statusCode,
         method: req.method,
         route: req.path
